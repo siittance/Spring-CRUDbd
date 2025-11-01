@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Клиенты</title>
+    <style>
+        body { font-family: 'Verdana', sans-serif; text-align: center; padding: 30px; background-color: #f0fff0; }
+        table { margin: auto; border-collapse: collapse; width: 80%; }
+        th, td { border: 1px solid #ccc; padding: 10px; }
+        a, button { text-decoration: none; color: #333; background-color: #e0ffe0; border: 1px solid #ccc; padding: 6px 12px; border-radius: 6px; }
+        a:hover, button:hover { background-color: #c0ffc0; }
+        form { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+<h1>Клиенты</h1>
+<a th:href="@{/}">Назад</a>
+
+<form th:action="@{/customers/save}" method="post" th:object="${customer}">
+    <input type="hidden" th:field="*{id}">
+    <p>ФИО: <input type="text" th:field="*{fullName}" required></p>
+    <p>Телефон: <input type="text" th:field="*{phone}"></p>
+    <button type="submit" th:text="${customer.id} != null ? 'Обновить' : 'Добавить'"></button>
+</form>
+
+<form method="get" th:action="@{/customers}">
+    <input type="text" name="keyword" th:value="${keyword}" placeholder="Поиск по ФИО">
+    <select name="status">
+        <option value="active" th:selected="${status == 'active'}">Активные</option>
+        <option value="archived" th:selected="${status == 'archived'}">Архивные</option>
+    </select>
+    <input type="hidden" name="page" value="0">
+    <input type="hidden" name="sortField" th:value="${sortField}">
+    <input type="hidden" name="sortDir" th:value="${sortDir}">
+    <button type="submit">Поиск</button>
+</form>
+
+<table>
+    <tr>
+        <th>ФИО</th>
+        <th>Телефон</th>
+        <th>Действия</th>
+    </tr>
+    <tr th:each="c : ${customers.content}">
+        <td th:text="${c.fullName}"></td>
+        <td th:text="${c.phone}"></td>
+        <td>
+            <a th:href="@{/customers/edit/{id}(id=${c.id}, keyword=${keyword}, status=${status}, page=${page}, sortField=${sortField}, sortDir=${sortDir})}">Редактировать</a>
+            <a th:href="@{/customers/delete/{id}(id=${c.id}, keyword=${keyword}, page=${page}, status=${status})}" th:if="${!c.deleted}">Архивировать</a>
+            <a th:href="@{/customers/restore/{id}(id=${c.id}, keyword=${keyword}, page=${page}, status=${status})}" th:if="${c.deleted}">Восстановить</a>
+            <a th:href="@{/customers/delete-physical/{id}(id=${c.id}, keyword=${keyword}, page=${page}, status=${status})}" style="color: red;">Удалить</a>
+        </td>
+    </tr>
+</table>
+
+<div>
+    <span th:text="'Страница ' + ${customers.number + 1} + ' из ' + ${customers.totalPages}"></span>
+    <div>
+        <a th:each="i : ${#numbers.sequence(0, customers.totalPages-1)}"
+           th:href="@{/customers(page=${i}, keyword=${keyword}, status=${status}, sortField=${sortField}, sortDir=${sortDir})}"
+           th:text="${i + 1}"></a>
+    </div>
+</div>
+</body>
+</html>

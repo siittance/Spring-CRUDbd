@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Категории</title>
+    <style>
+        body { font-family: 'Verdana', sans-serif; text-align: center; padding: 30px; background-color: #fff8dc; }
+        table { margin: auto; border-collapse: collapse; width: 70%; }
+        th, td { border: 1px solid #ccc; padding: 10px; }
+        a, button { text-decoration: none; color: #333; background-color: #fff6d1; border: 1px solid #ccc; padding: 6px 12px; border-radius: 6px; }
+        a:hover, button:hover { background-color: #f5e79d; }
+        form { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+<h1>Категории</h1>
+<a th:href="@{/}">Назад</a>
+
+<form th:action="@{/categories/save}" method="post" th:object="${category}">
+    <input type="hidden" th:field="*{id}">
+    <p>Название: <input type="text" th:field="*{name}" required></p>
+    <button type="submit" th:text="${category.id != null ? 'Обновить' : 'Добавить'}"></button>
+</form>
+
+<form method="get" th:action="@{/categories}">
+    <input type="text" name="keyword" th:value="${keyword}" placeholder="Поиск по названию">
+    <select name="status">
+        <option value="active" th:selected="${status == 'active'}">Активные</option>
+        <option value="archived" th:selected="${status == 'archived'}">Архивные</option>
+    </select>
+    <input type="hidden" name="page" value="0">
+    <input type="hidden" name="sortField" th:value="${sortField}">
+    <input type="hidden" name="sortDir" th:value="${sortDir}">
+    <button type="submit">Поиск</button>
+</form>
+
+<table>
+    <tr>
+        <th>Название</th>
+        <th>Действия</th>
+    </tr>
+    <tr th:each="c : ${categories.content}">
+        <td th:text="${c.name}"></td>
+        <td>
+            <a th:href="@{/categories/edit/{id}(id=${c.id}, keyword=${keyword}, status=${status}, page=${page}, sortField=${sortField}, sortDir=${sortDir})}">Редактировать</a>
+            <a th:href="@{/categories/delete/{id}(id=${c.id}, keyword=${keyword}, page=${page}, status=${status})}" th:if="${!c.deleted}">Архивировать</a>
+            <a th:href="@{/categories/restore/{id}(id=${c.id}, keyword=${keyword}, page=${page}, status=${status})}" th:if="${c.deleted}">Восстановить</a>
+            <a th:href="@{/categories/delete-physical/{id}(id=${c.id}, keyword=${keyword}, page=${page}, status=${status})}" style="color: red;">Удалить</a>
+        </td>
+    </tr>
+</table>
+
+<div>
+    <span th:text="'Страница ' + ${categories.number + 1} + ' из ' + ${categories.totalPages}"></span>
+    <div>
+        <a th:each="i : ${#numbers.sequence(0, categories.totalPages-1)}"
+           th:href="@{/categories(page=${i}, keyword=${keyword}, status=${status}, sortField=${sortField}, sortDir=${sortDir})}"
+           th:text="${i + 1}"></a>
+    </div>
+</div>
+</body>
+</html>

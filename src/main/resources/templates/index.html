@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Florencee</title>
+    <style>
+        body {
+            background-color: #fff8dc;
+            font-family: 'Verdana', sans-serif;
+            color: #444;
+            text-align: center;
+            padding: 50px;
+        }
+        a {
+            text-decoration: none;
+            color: #444;
+            border: 1px solid #ccc;
+            background-color: #fff6d1;
+            padding: 12px 20px;
+            margin: 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        a:hover {
+            background-color: #f5e79d;
+        }
+    </style>
+</head>
+<body>
+<h1>Florencee — Цветочный магазин</h1>
+<div>
+    <a th:href="@{/flowers}">Цветы</a>
+    <a th:href="@{/categories}">Категории</a>
+    <a th:href="@{/suppliers}">Поставщики</a>
+    <a th:href="@{/customers}">Клиенты</a>
+    <a th:href="@{/orders}">Заказы</a>
+</div>
+</body>
+</html>

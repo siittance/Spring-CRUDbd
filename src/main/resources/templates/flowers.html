@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Цветы</title>
+    <style>
+        body { font-family: 'Verdana', sans-serif; text-align: center; padding: 30px; background-color: #f0fff0; }
+        table { margin: auto; border-collapse: collapse; width: 80%; }
+        th, td { border: 1px solid #ccc; padding: 10px; }
+        a, button { text-decoration: none; color: #333; background-color: #e0ffe0; border: 1px solid #ccc; padding: 6px 12px; border-radius: 6px; }
+        a:hover, button:hover { background-color: #c0ffc0; }
+        form { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+<h1>Цветы</h1>
+<a th:href="@{/}">Назад</a>
+
+<form th:action="@{/flowers/save}" th:object="${flower}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <p>Название: <input type="text" th:field="*{name}" required></p>
+    <p>Описание: <input type="text" th:field="*{description}"></p>
+    <p>Цена: <input type="number" th:field="*{price}" step="0.01" required></p>
+    <p>Категория:
+        <select name="categoryId" required>
+            <option value="">Выберите категорию</option>
+            <option th:each="c : ${categories}" 
+                    th:value="${c.id}" 
+                    th:text="${c.name}"
+                    th:selected="${flower.category != null && flower.category.id == c.id}"></option>
+        </select>
+    </p>
+    <p>Поставщик:
+        <select name="supplierId" required>
+            <option value="">Выберите поставщика</option>
+            <option th:each="s : ${suppliers}" 
+                    th:value="${s.id}" 
+                    th:text="${s.name}"
+                    th:selected="${flower.supplier != null && flower.supplier.id == s.id}"></option>
+        </select>
+    </p>
+    <button type="submit" th:text="${flower.id} != null ? 'Обновить' : 'Добавить'"></button>
+</form>
+
+
+<form method="get" th:action="@{/flowers}">
+    <input type="text" name="keyword" th:value="${keyword}" placeholder="Поиск по названию">
+    <select name="categoryId">
+        <option value="">Все категории</option>
+        <option th:each="c : ${categories}" 
+                th:value="${c.id}" 
+                th:text="${c.name}"
+                th:selected="${categoryId != null && categoryId == c.id}"></option>
+    </select>
+    <select name="supplierId">
+        <option value="">Все поставщики</option>
+        <option th:each="s : ${suppliers}" 
+                th:value="${s.id}" 
+                th:text="${s.name}"
+                th:selected="${supplierId != null && supplierId == s.id}"></option>
+    </select>
+    <select name="status">
+        <option value="active" th:selected="${status == 'active'}">Активные</option>
+        <option value="archived" th:selected="${status == 'archived'}">Архивные</option>
+    </select>
+    <input type="hidden" name="page" value="0">
+    <input type="hidden" name="sortField" th:value="${sortField}">
+    <input type="hidden" name="sortDir" th:value="${sortDir}">
+    <button type="submit">Поиск</button>
+</form>
+
+<table>
+    <tr>
+        <th><a th:href="@{/flowers(sortField='name', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, keyword=${keyword}, status=${status}, categoryId=${categoryId}, supplierId=${supplierId})}">Название</a></th>
+        <th>Описание</th>
+        <th><a th:href="@{/flowers(sortField='price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, keyword=${keyword}, status=${status}, categoryId=${categoryId}, supplierId=${supplierId})}">Цена</a></th>
+        <th>Категория</th>
+        <th>Поставщик</th>
+        <th>Действия</th>
+    </tr>
+    <tr th:each="f : ${flowers.content}">
+        <td th:text="${f.name}"></td>
+        <td th:text="${f.description}"></td>
+        <td th:text="${f.price}"></td>
+        <td th:text="${f.category != null ? f.category.name : ''}"></td>
+        <td th:text="${f.supplier != null ? f.supplier.name : ''}"></td>
+        <td>
+            <a th:href="@{/flowers/edit/{id}(id=${f.id}, keyword=${keyword}, status=${status}, categoryId=${categoryId}, supplierId=${supplierId}, page=${page}, sortField=${sortField}, sortDir=${sortDir})}">Редактировать</a>
+            <a th:href="@{/flowers/delete/{id}(id=${f.id}, keyword=${keyword}, page=${page}, categoryId=${categoryId}, supplierId=${supplierId}, status=${status})}" th:if="${!f.deleted}">Архивировать</a>
+            <a th:href="@{/flowers/restore/{id}(id=${f.id}, keyword=${keyword}, page=${page}, categoryId=${categoryId}, supplierId=${supplierId}, status=${status})}" th:if="${f.deleted}">Восстановить</a>
+            <a th:href="@{/flowers/delete-physical/{id}(id=${f.id}, keyword=${keyword}, page=${page}, categoryId=${categoryId}, supplierId=${supplierId}, status=${status})}" style="color: red;">Удалить</a>
+        </td>
+    </tr>
+</table>
+
+<div>
+    <span th:text="'Страница ' + ${flowers.number + 1} + ' из ' + ${flowers.totalPages}"></span>
+    <div>
+        <a th:each="i : ${#numbers.sequence(0, flowers.totalPages-1)}"
+           th:href="@{/flowers(page=${i}, keyword=${keyword}, status=${status}, categoryId=${categoryId}, supplierId=${supplierId}, sortField=${sortField}, sortDir=${sortDir})}"
+           th:text="${i + 1}"></a>
+    </div>
+</div>
+</body>
+</html>
