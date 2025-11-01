@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <style>
+        body { font-family: 'Verdana', sans-serif; text-align: center; padding: 50px; background-color: #f0fff0; }
+        .register-form { max-width: 300px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        .error { color: red; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Регистрация</h1>
+    <div class="register-form">
+        <form th:action="@{/register}" method="post">
+            <input type="text" name="username" placeholder="Имя пользователя" required autofocus>
+            <input type="password" name="password" placeholder="Пароль (минимум 6 символов)" required minlength="6">
+            <select name="role">
+                <option value="USER">Пользователь</option>
+                <option value="MANAGER">Менеджер</option>
+                <option value="ADMIN">Администратор</option>
+            </select>
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        <div th:if="${param.error == 'exists'}" class="error">
+            Пользователь с таким именем уже существует
+        </div>
+        <p><a th:href="@{/login}">Войти</a></p>
+    </div>
+</body>
+</html>
+

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Florencee</title>
@@ -24,9 +24,31 @@
         a:hover {
             background-color: #f5e79d;
         }
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .logout {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        .logout:hover {
+            background-color: #ff5252;
+        }
     </style>
 </head>
 <body>
+<div class="user-info" sec:authorize="isAuthenticated()">
+    <div>Пользователь: <span sec:authentication="name"></span></div>
+    <div>Роли: <span sec:authentication="principal.authorities"></span></div>
+    <a th:href="@{/logout}" class="logout">Выход</a>
+</div>
+
 <h1>Florencee — Цветочный магазин</h1>
 <div>
     <a th:href="@{/flowers}">Цветы</a>

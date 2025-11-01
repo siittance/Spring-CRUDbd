@@ -1,8 +1,6 @@
 package com.example.project2.controller;
 
-import com.example.project2.model.Category;
 import com.example.project2.model.Flower;
-import com.example.project2.model.Supplier;
 import com.example.project2.service.CategoryService;
 import com.example.project2.service.FlowerService;
 import com.example.project2.service.SupplierService;

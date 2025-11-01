@@ -17,6 +17,9 @@ spring:
         format_sql:
 server:
   port: 8888
+  servlet:
+    session:
+      timeout: 1m
 
 
 
